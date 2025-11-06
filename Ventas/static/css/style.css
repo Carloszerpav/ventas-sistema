@@ -91,8 +91,8 @@ body {
     -webkit-overflow-scrolling: touch;
     /* Prevenir saltos en el scroll en PC */
     scroll-behavior: smooth;
-    /* Espacio para el header fijo - aumentado significativamente */
-    padding-top: 100px;
+    /* Padding-top se maneja en media queries específicas */
+    /* padding-top: 100px; - Eliminado, se maneja en media queries */
 }
 
 .container {
@@ -1334,25 +1334,32 @@ main > .container:first-of-type {
         padding: 0.75rem 0;
     }
     
-    body {
-        /* Espacio generoso en PC para evitar que tape contenido */
-        padding-top: 100px;
+    /* Padding-top del body eliminado - se maneja en contenedores específicos */
+    /* body { padding-top: 100px; } */
+    
+    /* En PC, aplicar padding-top al contenedor principal */
+    main.container:first-of-type,
+    body > main.container:first-of-type {
+        padding-top: 100px !important;
+        margin-top: 0 !important;
     }
     
-    /* En PC, el body ya tiene padding-top, main no necesita padding adicional */
-    main {
-        padding-top: 0;
+    /* Si no hay main.container, aplicar a la primera sección */
+    body > .stats-section:first-of-type,
+    main > .stats-section:first-of-type,
+    body > .form-section:first-of-type,
+    main > .form-section:first-of-type {
+        padding-top: 100px !important;
+        margin-top: 0 !important;
     }
     
     .container {
         margin-top: 0;
-        padding-top: 0;
     }
     
     /* Primera sección con espacio en PC */
     .stats-section:first-of-type {
-        margin-top: 1rem;
-        padding-top: 0;
+        margin-top: 0;
     }
     
     /* Scroll suave en PC */
@@ -1381,28 +1388,54 @@ main > .container:first-of-type {
         max-height: none;
     }
     
-    /* SOLUCIÓN ESPECÍFICA PARA MÓVILES: Compensar exactamente la altura del header */
-    body {
-        padding-top: 0 !important;
-    }
+    /* ========================================
+       SOLUCIÓN DEFINITIVA: HEADER FIJO EN MÓVIL
+       ======================================== */
     
-    /* Aplicar padding-top al main para compensar el header fijo en móviles */
-    /* Valor empírico seguro: 100px para compensar header dinámico */
-    main {
+    /* 1. Eliminar padding-top conflictivo del body y main - ELIMINADO */
+    /* body, main { padding-top: 0 !important; } */
+    
+    /* 2. Aplicar padding-top al PRIMER contenedor de contenido visible */
+    /* Prioridad: main.container primero, luego secciones directas */
+    main.container:first-of-type,
+    body > main.container:first-of-type {
         padding-top: 100px !important;
-        margin-top: 0;
+        margin-top: 0 !important;
     }
     
-    /* Asegurar que el contenedor no tenga padding adicional */
-    .container {
-        margin-top: 0;
-        padding-top: 0;
+    /* Si no hay main.container, aplicar a la primera sección visible */
+    body > .stats-section:first-of-type,
+    main > .stats-section:first-of-type,
+    body > .form-section:first-of-type,
+    main > .form-section:first-of-type,
+    body > .ventas-section:first-of-type,
+    main > .ventas-section:first-of-type,
+    body > .rubros-section:first-of-type,
+    main > .rubros-section:first-of-type,
+    body > .venta-info-section:first-of-type,
+    main > .venta-info-section:first-of-type,
+    body > .pago-section:first-of-type,
+    main > .pago-section:first-of-type,
+    body > .historial-section:first-of-type,
+    main > .historial-section:first-of-type,
+    body > .resumen-section:first-of-type,
+    main > .resumen-section:first-of-type,
+    body > .cliente-section:first-of-type,
+    main > .cliente-section:first-of-type,
+    body > .stats-container:first-of-type,
+    main > .stats-container:first-of-type,
+    body > .pendientes-container:first-of-type,
+    main > .pendientes-container:first-of-type,
+    body > .cierre-container:first-of-type,
+    main > .cierre-container:first-of-type {
+        padding-top: 100px !important;
+        margin-top: 0 !important;
     }
     
-    /* Primera sección sin margen adicional en móviles */
-    .stats-section:first-of-type {
-        margin-top: 0;
-        padding-top: 0;
+    /* 3. Eliminar márgenes/paddings redundantes de secciones dentro de main */
+    main .stats-section:first-of-type,
+    main .form-section:first-of-type {
+        margin-top: 0 !important;
     }
     
     .header-left h1 {
@@ -1572,27 +1605,54 @@ main > .container:first-of-type {
         max-height: none;
     }
     
-    /* SOLUCIÓN ESPECÍFICA PARA MÓVILES PEQUEÑOS: Compensar exactamente la altura del header */
-    body {
-        padding-top: 0 !important;
-    }
+    /* ========================================
+       SOLUCIÓN DEFINITIVA: HEADER FIJO EN MÓVIL PEQUEÑO
+       ======================================== */
     
-    /* Aplicar padding-top al main para compensar el header fijo en móviles pequeños */
-    /* Valor empírico seguro: 90px para compensar header dinámico */
-    main {
+    /* 1. Eliminar padding-top conflictivo del body y main - ELIMINADO */
+    /* body, main { padding-top: 0 !important; } */
+    
+    /* 2. Ajuste para móviles pequeños (header más compacto) - 90px */
+    /* Prioridad: main.container primero, luego secciones directas */
+    main.container:first-of-type,
+    body > main.container:first-of-type {
         padding-top: 90px !important;
-        margin-top: 0;
+        margin-top: 0 !important;
     }
     
-    .container {
-        margin-top: 0;
-        padding-top: 0;
+    /* Si no hay main.container, aplicar a la primera sección visible */
+    body > .stats-section:first-of-type,
+    main > .stats-section:first-of-type,
+    body > .form-section:first-of-type,
+    main > .form-section:first-of-type,
+    body > .ventas-section:first-of-type,
+    main > .ventas-section:first-of-type,
+    body > .rubros-section:first-of-type,
+    main > .rubros-section:first-of-type,
+    body > .venta-info-section:first-of-type,
+    main > .venta-info-section:first-of-type,
+    body > .pago-section:first-of-type,
+    main > .pago-section:first-of-type,
+    body > .historial-section:first-of-type,
+    main > .historial-section:first-of-type,
+    body > .resumen-section:first-of-type,
+    main > .resumen-section:first-of-type,
+    body > .cliente-section:first-of-type,
+    main > .cliente-section:first-of-type,
+    body > .stats-container:first-of-type,
+    main > .stats-container:first-of-type,
+    body > .pendientes-container:first-of-type,
+    main > .pendientes-container:first-of-type,
+    body > .cierre-container:first-of-type,
+    main > .cierre-container:first-of-type {
+        padding-top: 90px !important;
+        margin-top: 0 !important;
     }
     
-    /* Primera sección sin margen adicional en móviles pequeños */
-    .stats-section:first-of-type {
-        margin-top: 0;
-        padding-top: 0;
+    /* 3. Eliminar márgenes/paddings redundantes de secciones dentro de main */
+    main .stats-section:first-of-type,
+    main .form-section:first-of-type {
+        margin-top: 0 !important;
     }
     
     .header-left h1 {
