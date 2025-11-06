@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas por Período - Sistema de Ventas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .chart-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+        .chart-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        .period-form {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border: 1px solid var(--border-color);
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9em;
+        }
+        .form-group input {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 0.9em;
+        }
+        .btn-generate {
+            background: var(--accent-color);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        .btn-generate:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+        }
+        .ventas-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .ventas-table th,
+        .ventas-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .ventas-table th {
+            background: var(--header-bg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .ventas-table tr:hover {
+            background: var(--hover-bg);
+        }
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            .form-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header con toggle de tema -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><i class="fas fa-chart-line"></i> Estadísticas por Período</h1>
+                    <p>Análisis detallado de ventas por período de tiempo</p>
+                </div>
+                <div class="header-right">
+                    <div class="header-actions">
+                        <a href="/" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-home"></i> Inicio
+                        </a>
+                        <a href="/cierre-mensual" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-calendar-check"></i> Cierre Mensual
+                        </a>
+                        <a href="/ventas-excluidas" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-archive"></i> Ventas Excluidas
+                        </a>
+                        <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema">
+                            <i class="fas fa-sun light-icon"></i>
+                            <i class="fas fa-moon dark-icon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Formulario de selección de período -->
+        <section class="form-section">
+            <div class="form-container">
+                <h2><i class="fas fa-calendar-alt"></i> Seleccionar Período</h2>
+                <form method="POST" class="venta-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha_inicio">
+                                <i class="fas fa-calendar-plus"></i> Fecha de Inicio
+                            </label>
+                            <input type="date" id="fecha_inicio" name="fecha_inicio" 
+                                   value="{{ fecha_inicio if fecha_inicio else '' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha_fin">
+                                <i class="fas fa-calendar-check"></i> Fecha de Fin
+                            </label>
+                            <input type="date" id="fecha_fin" name="fecha_fin" 
+                                   value="{{ fecha_fin if fecha_fin else '' }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-chart-bar"></i> Generar Estadísticas
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+            {% if estadisticas %}
+            <!-- Estadísticas principales -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ estadisticas.total_ventas }}</h3>
+                            <p>Total Ventas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ formatear_moneda(estadisticas.total_valor) }}</h3>
+                            <p>Valor Total</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ formatear_moneda(estadisticas.total_abonado) }}</h3>
+                            <p>Total Abonado</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ formatear_moneda(estadisticas.total_pendiente) }}</h3>
+                            <p>Total Pendiente</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ estadisticas.ventas_activas }}</h3>
+                            <p>Ventas Activas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-double"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ estadisticas.ventas_cerradas }}</h3>
+                            <p>Ventas Cerradas</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gráficas -->
+            <section class="charts-section">
+                <div class="charts-container">
+                    <div class="chart-card">
+                        <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Ventas por Rubro</h3>
+                        <canvas id="chartRubros"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3 class="chart-title"><i class="fas fa-chart-line"></i> Ventas por Día</h3>
+                        <canvas id="chartPorDia"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Estadísticas por rubro -->
+            <section class="table-section">
+                <div class="card">
+                    <h3><i class="fas fa-chart-bar"></i> Estadísticas por Rubro</h3>
+                    <div class="table-container">
+                        <table class="ventas-table">
+                            <thead>
+                                <tr>
+                                    <th>Rubro</th>
+                                    <th>Cantidad</th>
+                                    <th>Valor Total</th>
+                                    <th>Abonado</th>
+                                    <th>Pendiente</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for rubro, stats in estadisticas.por_rubro.items() %}
+                                {% if stats.cantidad > 0 %}
+                                <tr>
+                                    <td>{{ rubro }}</td>
+                                    <td>{{ stats.cantidad }}</td>
+                                    <td>{{ formatear_moneda(stats.valor_total) }}</td>
+                                    <td>{{ formatear_moneda(stats.abonado) }}</td>
+                                    <td>{{ formatear_moneda(stats.pendiente) }}</td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Lista de ventas del período -->
+            <section class="table-section">
+                <div class="card">
+                    <h3><i class="fas fa-list"></i> Ventas del Período ({{ formatear_fecha(estadisticas.fecha_inicio) }} - {{ formatear_fecha(estadisticas.fecha_fin) }})</h3>
+                    <div class="table-container">
+                        <table class="ventas-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Fecha</th>
+                                    <th>Valor Total</th>
+                                    <th>Abonado</th>
+                                    <th>Pendiente</th>
+                                    <th>Estado</th>
+                                    <th>Rubros</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for venta in estadisticas.ventas_detalle %}
+                                <tr>
+                                    <td>{{ venta.id }}</td>
+                                    <td>{{ venta.cliente }}</td>
+                                    <td>{{ formatear_fecha(venta.fecha) }}</td>
+                                    <td>{{ formatear_moneda(venta.valor_total) }}</td>
+                                    <td>{{ formatear_moneda(venta.abono) }}</td>
+                                    <td>{{ formatear_moneda(venta.saldo_pendiente) }}</td>
+                                    <td>
+                                        <span class="badge {{ 'badge-success' if venta.estado == 'Cerrada' else 'badge-warning' }}">
+                                            {{ venta.estado }}
+                                        </span>
+                                    </td>
+                                    <td>{{ ', '.join(venta.rubros) }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <script>
+                // Gráfica de ventas por rubro
+                const ctxRubros = document.getElementById('chartRubros').getContext('2d');
+                const rubrosData = {{ estadisticas.por_rubro | tojson }};
+                
+                const rubrosLabels = [];
+                const rubrosValues = [];
+                const rubrosColors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'];
+                
+                let colorIndex = 0;
+                for (const [rubro, stats] of Object.entries(rubrosData)) {
+                    if (stats.cantidad > 0) {
+                        rubrosLabels.push(rubro);
+                        rubrosValues.push(stats.valor_total);
+                        colorIndex++;
+                    }
+                }
+                
+                new Chart(ctxRubros, {
+                    type: 'doughnut',
+                    data: {
+                        labels: rubrosLabels,
+                        datasets: [{
+                            data: rubrosValues,
+                            backgroundColor: rubrosColors.slice(0, rubrosLabels.length),
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#333'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Gráfica de ventas por día
+                const ctxPorDia = document.getElementById('chartPorDia').getContext('2d');
+                const porDiaData = {{ estadisticas.por_dia | tojson }};
+                
+                const diasLabels = [];
+                const diasValues = [];
+                
+                for (const [dia, stats] of Object.entries(porDiaData)) {
+                    diasLabels.push('{{ formatear_fecha("' + dia + '") }}');
+                    diasValues.push(stats.valor_total);
+                }
+                
+                new Chart(ctxPorDia, {
+                    type: 'line',
+                    data: {
+                        labels: diasLabels,
+                        datasets: [{
+                            label: 'Valor Total',
+                            data: diasValues,
+                            borderColor: '#36A2EB',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#333'
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: '#333',
+                                    callback: function(value) {
+                                        return '$' + value.toLocaleString();
+                                    }
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#333'
+                                }
+                            }
+                        }
+                    }
+                });
+            </script>
+            {% endif %}
+        </main>
+    </div>
+
+    <!-- Script para el toggle de tema -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Política de Privacidad - Sistema de Ventas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .privacy-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .privacy-container h1 {
+            color: var(--text-primary);
+            margin-bottom: 30px;
+        }
+        .privacy-container h2 {
+            color: var(--text-primary);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .privacy-container p, .privacy-container li {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        .privacy-container ul {
+            margin-left: 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="privacy-container">
+            <h1><i class="fas fa-shield-alt"></i> Política de Privacidad</h1>
+            <p><strong>Última actualización:</strong> {{ datetime.now().strftime('%d/%m/%Y') }}</p>
+            
+            <h2>1. Información que Recopilamos</h2>
+            <p>Esta aplicación utiliza Google OAuth para autenticación. Solo recopilamos la siguiente información de Google:</p>
+            <ul>
+                <li><strong>Email:</strong> Dirección de correo electrónico de tu cuenta de Google</li>
+                <li><strong>Nombre:</strong> Nombre asociado a tu cuenta de Google</li>
+                <li><strong>Foto de perfil:</strong> Imagen de perfil de Google (opcional)</li>
+            </ul>
+            
+            <h2>2. Uso de la Información</h2>
+            <p>La información recopilada se utiliza únicamente para:</p>
+            <ul>
+                <li>Identificar al usuario durante la sesión</li>
+                <li>Mostrar información personalizada en la interfaz</li>
+                <li>Gestionar el acceso al sistema</li>
+            </ul>
+            
+            <h2>3. Almacenamiento de Datos</h2>
+            <p>La información del usuario se almacena únicamente en la sesión del navegador mientras estás autenticado. No almacenamos información de forma permanente en nuestros servidores.</p>
+            
+            <h2>4. Compartir Información</h2>
+            <p>No compartimos, vendemos ni divulgamos tu información personal a terceros. Tu información es privada y solo se usa para el funcionamiento de esta aplicación.</p>
+            
+            <h2>5. Seguridad</h2>
+            <p>Utilizamos estándares de seguridad estándar para proteger tu información. La autenticación se realiza a través de Google OAuth, que utiliza protocolos de seguridad robustos.</p>
+            
+            <h2>6. Cookies</h2>
+            <p>Esta aplicación utiliza cookies de sesión para mantener tu sesión activa. Estas cookies se eliminan automáticamente al cerrar sesión.</p>
+            
+            <h2>7. Tus Derechos</h2>
+            <p>Tienes derecho a:</p>
+            <ul>
+                <li>Cerrar sesión en cualquier momento</li>
+                <li>Revocar el acceso de la aplicación desde tu cuenta de Google</li>
+                <li>Solicitar información sobre los datos que tenemos sobre ti</li>
+            </ul>
+            
+            <h2>8. Contacto</h2>
+            <p>Si tienes preguntas sobre esta política de privacidad, puedes contactarnos a través del email de soporte configurado en la aplicación.</p>
+            
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
+        </div>
+    </div>
+</body>
+</html>
+

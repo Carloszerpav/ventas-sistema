@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos de Servicio - Sistema de Ventas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .terms-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .terms-container h1 {
+            color: var(--text-primary);
+            margin-bottom: 30px;
+        }
+        .terms-container h2 {
+            color: var(--text-primary);
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .terms-container p, .terms-container li {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        .terms-container ul {
+            margin-left: 20px;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="terms-container">
+            <h1><i class="fas fa-file-contract"></i> Términos de Servicio</h1>
+            <p><strong>Última actualización:</strong> {{ datetime.now().strftime('%d/%m/%Y') }}</p>
+            
+            <h2>1. Aceptación de los Términos</h2>
+            <p>Al acceder y utilizar esta aplicación, aceptas estar sujeto a estos términos de servicio. Si no estás de acuerdo con alguna parte de estos términos, no debes utilizar la aplicación.</p>
+            
+            <h2>2. Uso de la Aplicación</h2>
+            <p>Esta aplicación está diseñada para gestionar ventas y estadísticas. Al utilizar esta aplicación, aceptas:</p>
+            <ul>
+                <li>Usar la aplicación de manera responsable y legal</li>
+                <li>No intentar acceder a áreas no autorizadas del sistema</li>
+                <li>No utilizar la aplicación para actividades ilegales</li>
+                <li>Mantener la confidencialidad de tu cuenta</li>
+            </ul>
+            
+            <h2>3. Autenticación con Google</h2>
+            <p>Esta aplicación utiliza Google OAuth para autenticación. Al iniciar sesión, autorizas a la aplicación a acceder a información básica de tu cuenta de Google (email, nombre, foto de perfil) únicamente para el funcionamiento de la aplicación.</p>
+            
+            <h2>4. Responsabilidad del Usuario</h2>
+            <p>Eres responsable de:</p>
+            <ul>
+                <li>Mantener la seguridad de tu cuenta de Google</li>
+                <li>Toda la información que ingreses en el sistema</li>
+                <li>El uso adecuado de los datos y estadísticas generadas</li>
+            </ul>
+            
+            <h2>5. Disponibilidad del Servicio</h2>
+            <p>Nos esforzamos por mantener la aplicación disponible, pero no garantizamos disponibilidad ininterrumpida. El servicio puede estar sujeto a mantenimiento, actualizaciones o interrupciones técnicas.</p>
+            
+            <h2>6. Limitación de Responsabilidad</h2>
+            <p>La aplicación se proporciona "tal cual" sin garantías de ningún tipo. No nos hacemos responsables de pérdidas de datos, interrupciones del servicio o cualquier otro daño derivado del uso de la aplicación.</p>
+            
+            <h2>7. Modificaciones</h2>
+            <p>Nos reservamos el derecho de modificar estos términos de servicio en cualquier momento. Los cambios entrarán en vigor al publicarse en esta página.</p>
+            
+            <h2>8. Cierre de Sesión</h2>
+            <p>Puedes cerrar sesión en cualquier momento desde la aplicación. También puedes revocar el acceso de la aplicación desde tu cuenta de Google en cualquier momento.</p>
+            
+            <h2>9. Propiedad Intelectual</h2>
+            <p>Todos los derechos de propiedad intelectual de la aplicación y su contenido pertenecen a sus respectivos propietarios.</p>
+            
+            <h2>10. Contacto</h2>
+            <p>Para cualquier consulta sobre estos términos de servicio, puedes contactarnos a través del email de soporte configurado en la aplicación.</p>
+            
+            <a href="/" class="back-link"><i class="fas fa-arrow-left"></i> Volver al inicio</a>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,81 @@
+# .gitignore para Sistema de Ventas
+
+# Archivos de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Entornos virtuales
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Configuraciones locales
+.env
+.env.local
+.env.production
+
+# Archivos de ejemplo (pueden contener información sensible)
+*.example
+.env.example
+EJEMPLO_CREDENCIALES.txt
+
+# Base de datos (si usas SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos de respaldo
+*.bak
+*.backup
+
+# Archivos de Windows
+*.lnk
+
+# Archivos de Python específicos de Flask
+instance/
+.webassets-cache
+
+# Archivos de configuración personal
+config.py
+settings.py

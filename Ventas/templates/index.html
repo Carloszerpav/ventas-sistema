@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<!-- Sistema de Ventas - Carloszerpav -->
+<!-- Esta es mi página principal del sistema -->
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Registro de Ventas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header con toggle de tema -->
+    <header class="header">
+    <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><i class="fas fa-chart-line"></i> Sistema de registro de ventas</h1>
+                    <p>Gestión completa de ventas y estadísticas</p>
+                    <button id="theme-toggle" class="theme-toggle-compact" aria-label="Cambiar tema">
+                        <i class="fas fa-sun light-icon"></i>
+                        <i class="fas fa-moon dark-icon"></i>
+                    </button>
+                </div>
+                <div class="header-right">
+                    <div class="header-actions">
+                        {% if current_user.is_authenticated %}
+                        <div class="user-info" style="display: flex; align-items: center; gap: 10px; margin-right: 15px;">
+                            {% if current_user.picture %}
+                            <img src="{{ current_user.picture }}" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--primary-color);">
+                            {% else %}
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary-color); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                {{ current_user.name[0] if current_user.name else 'U' }}
+                            </div>
+                            {% endif %}
+                            <span style="color: var(--text-primary); font-weight: 500;">{{ current_user.name }}</span>
+                        </div>
+                        {% endif %}
+                        <a href="/cierre-mensual" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-calendar-check"></i> Cierre Mensual
+                        </a>
+                        <a href="/ventas-excluidas" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-archive"></i> Ventas Excluidas
+                        </a>
+                        <a href="/estadisticas-periodo" class="btn btn-secondary btn-sm">
+                            <i class="fas fa-chart-bar"></i> Estadísticas por Período
+                        </a>
+                        {% if current_user.is_authenticated %}
+                        <a href="/logout" class="btn btn-secondary btn-sm" style="background: #dc3545; color: white;">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Estadísticas principales -->
+        <!-- Carloszerpav -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ estadisticas.total_ventas_activas }}</h3>
+                        <p>Ventas Activas</p>
+                    </div>
+                </div>
+            <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ estadisticas.total_ventas_cerradas }}</h3>
+                        <p>Ventas Cerradas</p>
+                    </div>
+            </div>
+            <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-archive"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ estadisticas.total_ventas_excluidas }}</h3>
+                        <p>Excluidas de Estadísticas</p>
+                    </div>
+            </div>
+            <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ formatear_moneda(estadisticas.total_valor) }}</h3>
+                        <p>Valor Total Activo</p>
+                    </div>
+            </div>
+            <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                <h3>{{ formatear_moneda(estadisticas.total_pendiente) }}</h3>
+                        <p>Pendiente por Cobrar</p>
+                    </div>
+            </div>
+        </div>
+        </section>
+
+        <!-- Formulario de registro -->
+        <section class="form-section">
+            <div class="form-container">
+                <h2><i class="fas fa-plus-circle"></i> Registrar Nueva Venta</h2>
+                <form action="/agregar" method="POST" class="venta-form">
+                    <div class="form-row">
+                <div class="form-group">
+                            <label for="cliente">
+                                <i class="fas fa-user"></i> Cliente/Producto
+                            </label>
+                            <input type="text" id="cliente" name="cliente" required 
+                                   placeholder="Nombre del cliente o producto">
+                </div>
+                <div class="form-group">
+                            <label for="valor_total">
+                                <i class="fas fa-dollar-sign"></i> Valor Total
+                            </label>
+                            <input type="number" id="valor_total" name="valor_total" 
+                                   step="0.01" min="0" required placeholder="0.00">
+                </div>
+                <div class="form-group">
+                            <label for="abono">
+                                <i class="fas fa-credit-card"></i> Abono
+                            </label>
+                            <input type="number" id="abono" name="abono" 
+                                   step="0.01" min="0" placeholder="0.00">
+                </div>
+                <div class="form-group">
+                            <label for="fecha">
+                                <i class="fas fa-calendar"></i> Fecha
+                            </label>
+                            <input type="date" id="fecha" name="fecha" 
+                                   value="{{ datetime.now().strftime('%Y-%m-%d') }}">
+                        </div>
+                </div>
+                
+                <div class="form-group">
+                        <label>
+                            <i class="fas fa-tags"></i> Rubros <span class="required">*</span>
+                        </label>
+                        <div class="rubros-grid">
+                    {% for rubro in rubros %}
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="rubros" value="{{ rubro }}">
+                                <span class="checkmark"></span>
+                                {{ rubro }}
+                            </label>
+                    {% endfor %}
+                        </div>
+                        <small class="form-help">Debe seleccionar al menos un rubro</small>
+                </div>
+                
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar Venta
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="fas fa-undo"></i> Limpiar
+                        </button>
+                    </div>
+            </form>
+        </div>
+        </section>
+
+        <!-- Lista de ventas -->
+          <!-- Carloszerpav -->
+        <section class="ventas-section">
+            <div class="ventas-container">
+                <div class="ventas-header">
+                    <h2><i class="fas fa-list"></i> Ventas Registradas</h2>
+                    <div class="search-container">
+                        <form action="/buscar" method="GET" class="search-form">
+                            <div class="search-input-group">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" 
+                                       name="q" 
+                                       id="search-input"
+                                       placeholder="Buscar por nombre de cliente..." 
+                                       value="{{ busqueda if busqueda else '' }}"
+                                       class="search-input">
+                                <button type="submit" class="search-btn" title="Buscar">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </form>
+                        {% if busqueda %}
+                        <div class="search-results">
+                            <span class="results-count">{{ ventas|length }} resultado{% if ventas|length != 1 %}s{% endif %}</span>
+                            <a href="/" class="clear-search" title="Limpiar búsqueda">
+                                <i class="fas fa-times"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% if ventas %}
+                <div class="table-container">
+                    <table class="ventas-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                                <th>Cliente</th>
+                        <th>Valor Total</th>
+                                <th>Abonado</th>
+                        <th>Pendiente</th>
+                                <th>Pagos</th>
+                                <th>Rubros</th>
+                                <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for venta in ventas %}
+                            <tr class="venta-row">
+                        <td>#{{ venta.id }}</td>
+                        <td>{{ venta.cliente }}</td>
+                                <td class="amount">{{ formatear_moneda(venta.valor_total) }}</td>
+                                <td class="amount">{{ formatear_moneda(venta.abono) }}</td>
+                                <td class="amount {% if venta.saldo_pendiente > 0 %}pending{% endif %}">
+                                    {{ formatear_moneda(venta.saldo_pendiente) }}
+                                </td>
+                                <td>
+                                    <span class="pagos-count">{{ venta.total_pagos }}</span>
+                                    {% if venta.total_pagos > 0 %}
+                                    <a href="/historial/{{ venta.id }}" class="btn-history" title="Ver historial">
+                                        <i class="fas fa-history"></i>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="rubros-tags">
+                                        {% for rubro in venta.rubros %}
+                                        <span class="tag">{{ rubro }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                        <td>{{ formatear_fecha(venta.fecha) }}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        {% if venta.saldo_pendiente > 0 %}
+                                        <a href="/pago/{{ venta.id }}" class="btn-pay" title="Registrar pago">
+                                            <i class="fas fa-credit-card"></i>
+                                        </a>
+                                        {% endif %}
+                                        <a href="/eliminar/{{ venta.id }}" 
+                                           class="btn-delete" 
+                                           onclick="return confirm('¿Estás seguro de eliminar esta venta?')"
+                                           title="Eliminar venta">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h3>No hay ventas registradas</h3>
+                    <p>Comienza agregando tu primera venta usando el formulario de arriba.</p>
+                </div>
+            {% endif %}
+        </div>
+        </section>
+
+        <!-- Estadísticas por rubro -->
+        <section class="rubros-section">
+            <div class="rubros-container">
+                <h2><i class="fas fa-chart-pie"></i> Estadísticas por Rubro</h2>
+                <div class="rubros-stats">
+            {% for rubro, stats in estadisticas.por_rubro.items() %}
+                    <div class="rubro-card">
+                        <div class="rubro-header">
+                            <h3>{{ rubro }}</h3>
+                            <span class="rubro-count">{{ stats.cantidad }} ventas</span>
+                        </div>
+                        <div class="rubro-stats">
+                            <div class="rubro-stat">
+                                <span class="label">Total:</span>
+                                <span class="value">{{ formatear_moneda(stats.valor_total) }}</span>
+                            </div>
+                            <div class="rubro-stat">
+                                <span class="label">Abonado:</span>
+                                <span class="value">{{ formatear_moneda(stats.abonado) }}</span>
+                            </div>
+                            <div class="rubro-stat">
+                                <span class="label">Pendiente:</span>
+                                <span class="value pending">{{ formatear_moneda(stats.pendiente) }}</span>
+                            </div>
+                        </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+        </section>
+    </main>
+ <!-- Carloszerpav -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

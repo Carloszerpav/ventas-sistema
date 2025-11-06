@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas Excluidas - Sistema de Ventas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><i class="fas fa-archive"></i> Ventas Excluidas</h1>
+                    <p>Ventas cerradas excluidas de estadísticas</p>
+                </div>
+                <div class="header-right">
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Resumen -->
+        <section class="resumen-section">
+            <div class="resumen-container">
+                <h2><i class="fas fa-chart-pie"></i> Resumen</h2>
+                <div class="resumen-grid">
+                    <div class="resumen-card">
+                        <div class="resumen-icon">
+                            <i class="fas fa-archive"></i>
+                        </div>
+                        <div class="resumen-content">
+                            <h3>{{ ventas|length }}</h3>
+                            <p>Ventas Excluidas</p>
+                        </div>
+                    </div>
+                    <div class="resumen-card">
+                        <div class="resumen-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="resumen-content">
+                            <h3>{{ formatear_moneda(ventas|sum(attribute='valor_total')) }}</h3>
+                            <p>Valor Total Excluido</p>
+                        </div>
+                    </div>
+                    <div class="resumen-card">
+                        <div class="resumen-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="resumen-content">
+                            <h3>{{ formatear_moneda(ventas|sum(attribute='abono')) }}</h3>
+                            <p>Total Abonado</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Lista de ventas excluidas -->
+        <section class="ventas-section">
+            <div class="ventas-container">
+                <h2><i class="fas fa-list"></i> Ventas Excluidas de Estadísticas</h2>
+                {% if ventas %}
+                <div class="table-container">
+                    <table class="ventas-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Valor Total</th>
+                                <th>Abonado</th>
+                                <th>Pagos</th>
+                                <th>Rubros</th>
+                                <th>Fecha</th>
+                                <th>Mes Cierre</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta in ventas %}
+                            <tr class="venta-row">
+                                <td>#{{ venta.id }}</td>
+                                <td>{{ venta.cliente }}</td>
+                                <td class="amount">{{ formatear_moneda(venta.valor_total) }}</td>
+                                <td class="amount">{{ formatear_moneda(venta.abono) }}</td>
+                                <td>
+                                    <span class="pagos-count">{{ venta.total_pagos }}</span>
+                                </td>
+                                <td>
+                                    <div class="rubros-tags">
+                                        {% for rubro in venta.rubros %}
+                                        <span class="tag">{{ rubro }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                                <td>{{ formatear_fecha(venta.fecha) }}</td>
+                                <td>
+                                    {% if venta.mes_cierre %}
+                                    <span class="mes-cierre">{{ venta.mes_cierre }}</span>
+                                    {% else %}
+                                    <span class="mes-cierre">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-archive"></i>
+                    <h3>No hay ventas excluidas</h3>
+                    <p>Todas las ventas están incluidas en las estadísticas actuales.</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cierre Mensual - Sistema de Ventas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><i class="fas fa-calendar-check"></i> Cierre Mensual</h1>
+                    <p>Gestión de cierre mensual de estadísticas</p>
+                </div>
+                <div class="header-right">
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Resumen de estadísticas actuales -->
+        <section class="stats-section">
+            <div class="stats-container">
+                <h2><i class="fas fa-chart-bar"></i> Estadísticas Actuales</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ estadisticas.total_ventas_activas }}</h3>
+                            <p>Ventas Activas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ estadisticas.total_ventas_cerradas }}</h3>
+                            <p>Ventas Cerradas</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ formatear_moneda(estadisticas.total_valor) }}</h3>
+                            <p>Valor Total</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ formatear_moneda(estadisticas.total_pendiente) }}</h3>
+                            <p>Pendiente por Cobrar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ventas pendientes de cierre -->
+        <section class="pendientes-section">
+            <div class="pendientes-container">
+                <h2><i class="fas fa-list"></i> Ventas Cerradas Pendientes de Cierre</h2>
+                {% if ventas_pendientes %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Hay {{ ventas_pendientes|length }} venta(s) cerrada(s) que serán excluidas de las estadísticas al realizar el cierre mensual.</span>
+                </div>
+                <div class="table-container">
+                    <table class="ventas-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Valor Total</th>
+                                <th>Abonado</th>
+                                <th>Pagos</th>
+                                <th>Rubros</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for venta in ventas_pendientes %}
+                            <tr class="venta-row">
+                                <td>#{{ venta.id }}</td>
+                                <td>{{ venta.cliente }}</td>
+                                <td class="amount">{{ formatear_moneda(venta.valor_total) }}</td>
+                                <td class="amount">{{ formatear_moneda(venta.abono) }}</td>
+                                <td>
+                                    <span class="pagos-count">{{ venta.total_pagos }}</span>
+                                </td>
+                                <td>
+                                    <div class="rubros-tags">
+                                        {% for rubro in venta.rubros %}
+                                        <span class="tag">{{ rubro }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                                <td>{{ formatear_fecha(venta.fecha) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-check-circle"></i>
+                    <h3>No hay ventas pendientes de cierre</h3>
+                    <p>Todas las ventas cerradas ya han sido procesadas en cierres anteriores.</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Formulario de cierre mensual -->
+        {% if ventas_pendientes %}
+        <section class="cierre-section">
+            <div class="cierre-container">
+                <h2><i class="fas fa-calendar-times"></i> Realizar Cierre Mensual</h2>
+                <div class="cierre-info">
+                    <p><strong>⚠️ Atención:</strong> Al realizar el cierre mensual, las ventas cerradas serán excluidas permanentemente de las estadísticas por rubro.</p>
+                    <p>Esta acción no se puede deshacer.</p>
+                </div>
+                <form action="/cierre-mensual" method="POST" class="cierre-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="mes">
+                                <i class="fas fa-calendar"></i> Mes
+                            </label>
+                            <select id="mes" name="mes" required>
+                                <option value="1">Enero</option>
+                                <option value="2">Febrero</option>
+                                <option value="3">Marzo</option>
+                                <option value="4">Abril</option>
+                                <option value="5">Mayo</option>
+                                <option value="6">Junio</option>
+                                <option value="7">Julio</option>
+                                <option value="8">Agosto</option>
+                                <option value="9">Septiembre</option>
+                                <option value="10">Octubre</option>
+                                <option value="11">Noviembre</option>
+                                <option value="12">Diciembre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="año">
+                                <i class="fas fa-calendar-alt"></i> Año
+                            </label>
+                            <input type="number" id="año" name="año" 
+                                   value="{{ datetime.now().year }}" min="2020" max="2030" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" 
+                                onclick="return confirm('¿Estás seguro de realizar el cierre mensual? Esta acción no se puede deshacer.')">
+                            <i class="fas fa-check"></i> Realizar Cierre Mensual
+                        </button>
+                        <a href="/" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

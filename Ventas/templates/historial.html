@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Pagos - Sistema de Ventas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><i class="fas fa-history"></i> Historial de Pagos</h1>
+                    <p>Venta #{{ venta.id }} - {{ venta.cliente }}</p>
+                </div>
+                <div class="header-right">
+                    <a href="/" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Resumen de la venta -->
+        <section class="resumen-section">
+            <div class="resumen-container">
+                <h2><i class="fas fa-chart-pie"></i> Resumen de la Venta</h2>
+                <div class="resumen-grid">
+                    <div class="resumen-card">
+                        <div class="resumen-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="resumen-content">
+                            <h3>{{ formatear_moneda(venta.valor_total) }}</h3>
+                            <p>Valor Total</p>
+                        </div>
+                    </div>
+                    <div class="resumen-card">
+                        <div class="resumen-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="resumen-content">
+                            <h3>{{ formatear_moneda(venta.abono) }}</h3>
+                            <p>Total Abonado</p>
+                        </div>
+                    </div>
+                    <div class="resumen-card">
+                        <div class="resumen-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="resumen-content">
+                            <h3>{{ formatear_moneda(venta.saldo_pendiente) }}</h3>
+                            <p>Saldo Pendiente</p>
+                        </div>
+                    </div>
+                    <div class="resumen-card">
+                        <div class="resumen-icon">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                        <div class="resumen-content">
+                            <h3>{{ venta.total_pagos }}</h3>
+                            <p>Pagos Realizados</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Información del cliente -->
+        <section class="cliente-section">
+            <div class="cliente-container">
+                <h2><i class="fas fa-user"></i> Información del Cliente</h2>
+                <div class="cliente-details">
+                    <div class="detail-item">
+                        <span class="label">Cliente:</span>
+                        <span class="value">{{ venta.cliente }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Fecha de Venta:</span>
+                        <span class="value">{{ formatear_fecha(venta.fecha) }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Rubros:</span>
+                        <span class="value">
+                            {% for rubro in venta.rubros %}
+                            <span class="tag">{{ rubro }}</span>
+                            {% endfor %}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="label">Estado:</span>
+                        <span class="value status-{{ venta.estado.lower() }}">
+                            <i class="fas fa-{% if venta.estado == 'Activa' %}clock{% else %}check-circle{% endif %}"></i>
+                            {{ venta.estado }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Historial detallado de pagos -->
+        <section class="historial-detallado-section">
+            <div class="historial-detallado-container">
+                <h2><i class="fas fa-list"></i> Historial Detallado de Pagos</h2>
+                {% if venta.historial_pagos %}
+                <div class="historial-timeline">
+                    {% for pago in venta.historial_pagos %}
+                    <div class="timeline-item">
+                        <div class="timeline-marker">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-header">
+                                <h4>{{ pago.tipo }}</h4>
+                                <span class="timeline-date">{{ pago.fecha }}</span>
+                            </div>
+                            <div class="timeline-body">
+                                <p class="timeline-amount">{{ formatear_moneda(pago.monto) }}</p>
+                                <p class="timeline-description">Pago #{{ pago.id }} registrado</p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <h3>No hay pagos registrados</h3>
+                    <p>Esta venta aún no tiene pagos registrados.</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Tabla de pagos -->
+        {% if venta.historial_pagos %}
+        <section class="tabla-pagos-section">
+            <div class="tabla-pagos-container">
+                <h2><i class="fas fa-table"></i> Tabla de Pagos</h2>
+                <div class="table-container">
+                    <table class="pagos-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha y Hora</th>
+                                <th>Tipo de Pago</th>
+                                <th>Monto</th>
+                                <th>Saldo Restante</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set saldo_acumulado = 0 %}
+                            {% for pago in venta.historial_pagos %}
+                            {% set saldo_acumulado = saldo_acumulado + pago.monto %}
+                            <tr>
+                                <td>{{ pago.id }}</td>
+                                <td>{{ pago.fecha }}</td>
+                                <td>
+                                    <span class="pago-tipo">{{ pago.tipo }}</span>
+                                </td>
+                                <td class="amount">{{ formatear_moneda(pago.monto) }}</td>
+                                <td class="amount">{{ formatear_moneda(venta.valor_total - saldo_acumulado) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr class="total-row">
+                                <td colspan="3"><strong>Total Abonado:</strong></td>
+                                <td class="amount total"><strong>{{ formatear_moneda(venta.abono) }}</strong></td>
+                                <td class="amount pending"><strong>{{ formatear_moneda(venta.saldo_pendiente) }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
