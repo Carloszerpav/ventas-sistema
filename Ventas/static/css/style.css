@@ -91,16 +91,16 @@ body {
     -webkit-overflow-scrolling: touch;
     /* Prevenir saltos en el scroll en PC */
     scroll-behavior: smooth;
-    /* Espacio para el header fijo */
-    padding-top: 70px;
+    /* Espacio para el header fijo - aumentado para evitar que tape contenido */
+    padding-top: 85px;
 }
 
 .container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
-    /* Margen superior para compensar el header fijo */
-    margin-top: 1rem;
+    /* Margen superior adicional para compensar el header fijo */
+    margin-top: 0;
 }
 
 /* ========================================
@@ -261,9 +261,9 @@ body {
     margin-bottom: 2rem;
 }
 
-/* Primera sección después del header fijo */
+/* Primera sección después del header fijo - espacio adicional */
 .stats-section:first-of-type {
-    margin-top: 0;
+    margin-top: 1rem;
 }
 
 /* ========================================
@@ -1321,11 +1321,12 @@ body {
     }
     
     body {
-        padding-top: 70px;
+        /* Más espacio en PC para evitar que tape contenido */
+        padding-top: 90px;
     }
     
     .container {
-        margin-top: 1.5rem;
+        margin-top: 0;
     }
     
     /* Scroll suave en PC */
@@ -1352,11 +1353,12 @@ body {
     }
     
     body {
-        padding-top: 60px;
+        /* Más espacio en móviles para evitar que tape contenido */
+        padding-top: 75px;
     }
     
     .container {
-        margin-top: 1rem;
+        margin-top: 0;
     }
     
     .header-left h1 {
@@ -1524,7 +1526,12 @@ body {
     }
     
     body {
-        padding-top: 55px;
+        /* Más espacio en móviles pequeños para evitar que tape contenido */
+        padding-top: 70px;
+    }
+    
+    .container {
+        margin-top: 0;
     }
     
     .header-left h1 {
