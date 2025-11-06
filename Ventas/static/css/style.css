@@ -130,8 +130,8 @@ main > .container:first-of-type {
     z-index: 1000;
     width: 100%;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    /* Altura mínima para calcular el espacio necesario */
-    min-height: 60px;
+    /* Altura dinámica para permitir wrapping correcto del contenido */
+    height: auto;
 }
 
 
@@ -1378,6 +1378,7 @@ main > .container:first-of-type {
         padding: 0.5rem 0;
         min-height: 70px;
         height: auto;
+        max-height: none;
     }
     
     /* SOLUCIÓN ESPECÍFICA PARA MÓVILES: Compensar exactamente la altura del header */
@@ -1386,8 +1387,9 @@ main > .container:first-of-type {
     }
     
     /* Aplicar padding-top al main para compensar el header fijo en móviles */
+    /* Valor empírico seguro: 100px para compensar header dinámico */
     main {
-        padding-top: 85px !important;
+        padding-top: 100px !important;
         margin-top: 0;
     }
     
@@ -1567,6 +1569,7 @@ main > .container:first-of-type {
         padding: 0.4rem 0;
         min-height: 65px;
         height: auto;
+        max-height: none;
     }
     
     /* SOLUCIÓN ESPECÍFICA PARA MÓVILES PEQUEÑOS: Compensar exactamente la altura del header */
@@ -1575,8 +1578,9 @@ main > .container:first-of-type {
     }
     
     /* Aplicar padding-top al main para compensar el header fijo en móviles pequeños */
+    /* Valor empírico seguro: 90px para compensar header dinámico */
     main {
-        padding-top: 80px !important;
+        padding-top: 90px !important;
         margin-top: 0;
     }
     
