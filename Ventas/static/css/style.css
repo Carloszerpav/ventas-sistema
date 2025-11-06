@@ -91,16 +91,26 @@ body {
     -webkit-overflow-scrolling: touch;
     /* Prevenir saltos en el scroll en PC */
     scroll-behavior: smooth;
-    /* Espacio para el header fijo - aumentado para evitar que tape contenido */
-    padding-top: 85px;
+    /* Espacio para el header fijo - aumentado significativamente */
+    padding-top: 100px;
 }
 
 .container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
-    /* Margen superior adicional para compensar el header fijo */
+    /* Sin margen superior, el padding-top del body ya lo maneja */
     margin-top: 0;
+}
+
+/* Asegurar que el main y contenedores después del header tengan espacio */
+main {
+    padding-top: 1.5rem;
+}
+
+body > .container:first-of-type,
+main > .container:first-of-type {
+    padding-top: 0;
 }
 
 /* ========================================
@@ -119,6 +129,8 @@ body {
     z-index: 1000;
     width: 100%;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    /* Altura mínima para calcular el espacio necesario */
+    min-height: 60px;
 }
 
 
@@ -263,7 +275,8 @@ body {
 
 /* Primera sección después del header fijo - espacio adicional */
 .stats-section:first-of-type {
-    margin-top: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 0.5rem;
 }
 
 /* ========================================
@@ -1321,12 +1334,23 @@ body {
     }
     
     body {
-        /* Más espacio en PC para evitar que tape contenido */
-        padding-top: 90px;
+        /* Espacio generoso en PC para evitar que tape contenido */
+        padding-top: 110px !important;
+    }
+    
+    main {
+        padding-top: 1.5rem;
     }
     
     .container {
         margin-top: 0;
+        padding-top: 0;
+    }
+    
+    /* Primera sección con más espacio en PC */
+    .stats-section:first-of-type {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
     }
     
     /* Scroll suave en PC */
@@ -1350,15 +1374,27 @@ body {
     /* Header más compacto en móviles */
     .header {
         padding: 0.5rem 0;
+        min-height: 55px;
     }
     
     body {
-        /* Más espacio en móviles para evitar que tape contenido */
-        padding-top: 75px;
+        /* Espacio generoso en móviles para evitar que tape contenido */
+        padding-top: 110px !important;
+    }
+    
+    main {
+        padding-top: 1.5rem;
     }
     
     .container {
         margin-top: 0;
+        padding-top: 0;
+    }
+    
+    /* Primera sección con más espacio en móviles */
+    .stats-section:first-of-type {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
     }
     
     .header-left h1 {
@@ -1523,15 +1559,27 @@ body {
     /* Header súper compacto para móviles pequeños */
     .header {
         padding: 0.4rem 0;
+        min-height: 50px;
     }
     
     body {
-        /* Más espacio en móviles pequeños para evitar que tape contenido */
-        padding-top: 70px;
+        /* Espacio generoso en móviles pequeños para evitar que tape contenido */
+        padding-top: 105px !important;
+    }
+    
+    main {
+        padding-top: 1.5rem;
     }
     
     .container {
         margin-top: 0;
+        padding-top: 0;
+    }
+    
+    /* Primera sección con más espacio en móviles pequeños */
+    .stats-section:first-of-type {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
     }
     
     .header-left h1 {
